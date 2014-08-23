@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="well">
+    <form class="form-inline" id="video_form">
+        <label for="video_url">Video URL:</label>
+        <input id="video_url" type="text" placeholder="URL" class="span5">
+
+        <label for="video_lang">Language:</label>
+        <select id="video_lang" class="span1">
+            <option selected="">de</option>
+            <option>fr</option>
+        </select>
+
+        <label for="video_quality">Quality:</label>
+        <select id="video_quality" class="span1">
+            <option selected="">hd</option>
+            <option>sd</option>
+        </select>
+    <input type="submit" value="Go" class="btn btn-primary" id="submit_btn">
+    <input type="reset" value="Clear" class="btn">
+    </form>
+    </div>
+    <ul id="video_list" class="thumbnails">
+    </ul>
+{% endblock %}
+
+{% block js %}
+
+    <script type="text/javascript">
+        var url = "";
+        var lookup_url = "{{ url_for("lookup_video") }}";
+        var enqueu_url = "{{ url_for("enqueue_video") }}";
+        var video_info_url = "{{ url_for("video_info") }}";
+        var video_delete_url = "{{ url_for("video_delete") }}";
+        var video_download_base = "{{ url_for("video_download") }}";
+        var videos_url = "{{ url_for("videos") }}"
+    </script>
+
+    <script type="text/template" id="alert_template">
+        <div class="alert <%= type %>">
+            <button type="button" class="close" data-dismiss="alert">×</button>
+            <strong><%= tag %>!</strong> <%= message %>
+        </div>
+    </script>
+
+    <script type="text/template" id="video_template">
+        <div class="thumbnail">
+            <div style="float: right">
+                <span class="label label-info"><%= lang %></span>
+                <span class="label label-info"><%= quality %></span>
+            </div>
+            <h3><%= name %></h3>
+            <p>Date: <%= date %></p>
+            <img src="<%= thumbnail %>" alt="">
+            <% if (state == 'COMPLETE') { %>
+            <a href="<%= download %>" class="btn btn-success">Download</a>
+            <span class="btn btn-danger video_delete"  style="float: right">Delete</span>
+            <% } else if (state == 'CONVERTING') { %>
+            <div class="progress progress-striped active">
+                <div class="bar" style="width: 100%;"></div>
+            </div>
+            <p>Converting ...</p>
+            <% } else if (state == 'NEW') { %>
+            <p>Not loaded at all</p>
+            <% } else { %>
+            <div class="progress progress-striped active">
+                <div class="bar" style="width: <%= progress %>%;"></div>
+            </div>
+            <p>Download ...</p>
+            <% } %>
+        </div>
+    </script>
+    <script src="{{ url_for("static", filename="custom/js/app.js") }}"></script>
+{% endblock %}
+
